@@ -1,0 +1,108 @@
+﻿@*@model NfcDemo.Models.DeliveryVm
+
+<div class="row" ng-if="mc.showDelForm">
+    <form class="form-horizontal" name="deliveryForm" novalidate role="form">
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <h4>Добавить поставку</h4>
+            <hr/>
+            @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+            <div class="form-group">
+                @Html.LabelFor(model => model.DelNo, new {@class = "control-label col-md-2"})
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.DelNo, new {htmlAttributes = new {@class = "form-control", ng_model = "mc.del.delNo", id = "delNo", name = "delNo", ng_required = "true"}})
+
+                    <span class="help-block"
+                          ng-if="deliveryForm.DelNo.$error.required">Введите номер поставки</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Currency, new {@class = "control-label col-md-2"})
+                <div class="col-md-10">
+
+                    @Html.DropDownListFor(model => model.Currency, new SelectList(new[] {810, 840}), new {@class = "form-control", ng_model = "mc.del.currency", id = "currency", name = "currency", ng_required = "true"})
+
+                    <span class="help-block"
+                          ng-if="deliveryForm.Currency.$error.required">Введите валюту</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Sum, new {@class = "control-label col-md-2"})
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Sum, new {htmlAttributes = new {@class = "form-control", ng_model = "mc.del.sum", id = "sum", name = "sum", ng_required = "true"}})
+
+                    <span class="help-block"
+                          ng-if="deliveryForm.Sum.$error.required">Введите сумму поставки</span>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Supplier, new {@class = "control-label col-md-2"})
+                <div class="col-md-10">
+
+                    @Html.DropDownListFor(model => model.Supplier, new SelectList(new[] {"ИП Альфа", "АО Бета"}), new {@class = "form-control", ng_model = "mc.del.supplier", id = "currency", name = "currency", ng_required = "true"})
+
+                    <span class="help-block"
+                          ng-if="deliveryForm.Supplier.$error.required">Выбор поставщика</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="button" value="Create" class="btn btn-default" ng-click="mc.saveDel(mc.del)">Отправить</button>
+                </div>
+            </div>
+        </div>
+        $1$        <p>
+            input valid? = <code>{{deliveryForm.$valid}}</code>
+        </p>#1#
+        <br>
+    </form>
+</div>*@
+
+
+<script type="text/ng-template" id="addNewDelivery.html">
+    <form class="form-horizontal" name="saveUpdateForm" novalidate role="form">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$instc.cancel()">&times;</button>
+            <h3 class="text-info">{{$instc.title}}</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-group" ng-class="{'has-error':saveUpdateForm.delNumber.$invalid && saveUpdateForm.delNumber.$touched ||saveUpdateForm.itin.$error.pattern }" show-errors>
+                <label for="delNumber" class="text-info">Delivery Number</label>
+                <input class="form-control" id="delNumber" name="delNumber" ng-model="$instc.editableDelivery.delNumber" type="text" placeholder="Your Delivery Number here" ng-required="true" />
+                <span class="help-block"
+                      ng-if="saveUpdateForm.delNumber.$error.required && saveUpdateForm.delNumber.$touched">Please enter your Delivery Number</span>
+            </div>
+            <div class="form-group" ng-class="{'has-error':saveUpdateForm.cur.$invalid && saveUpdateForm.cur.$touched ||saveUpdateForm.cur.$error.pattern }" show-errors>
+                <label for="cur" class="text-info">Currency</label>
+                <input class="form-control" id="cur" name="cur" ng-model="$instc.editableDelivery.currency" type="number" placeholder="Your currency code here" ng-required="true" />
+                <span class="help-block"
+                      ng-if="saveUpdateForm.cur.$error.required && saveUpdateForm.cur.$touched">Please enter your Currency Number</span>
+            </div>
+            <div class="form-group" ng-class="{'has-error':saveUpdateForm.sum.$invalid && saveUpdateForm.sum.$touched ||saveUpdateForm.sum.$error.pattern }" show-errors>
+                <label for="cur" class="text-info">Total $</label>
+                <div class="input-group">
+                @*    <div class="input-group-addon">$</div>*@
+                    <input class="form-control" id="sum" name="sum" ng-model="$instc.editableDelivery.total" type="text" placeholder="Your total bill here" ng-required="true" />
+                 @*   <div class="input-group-addon">.00</div>*@
+                    <span class="help-block"
+                          ng-if="saveUpdateForm.cur.$error.required && saveUpdateForm.cur.$touched">Please enter your currency Number</span>
+                  
+                </div>
+            </div>
+            <div class="form-group" ng-class="{'has-error':saveUpdateForm.suppl.$invalid && saveUpdateForm.suppl.$touched ||saveUpdateForm.suppl.$error.pattern }" show-errors>
+                <label for="suppl" class="text-info">Supplier</label>
+                @*                <input class="form-control" id="suppl" name="suppl" ng-model="$instc.editableDelivery.suppl" type="number" placeholder="Choose from dropdownlist" ng-required="true" />*@                
+                <select class="form-control" name="suppl" ng-model="$instc.editableDelivery.suppl" ng-options="x.companyName for x in $instc.options"></select>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" class="btn btn-primary" value="submit" ng-disabled="!saveUpdateForm.$valid" ng-click="$instc.submitForm()" />
+                <button type="button" class="btn btn-default" ng-click="$instc.cancel()">Close</button>
+            </div>
+
+    </form>
+</script>

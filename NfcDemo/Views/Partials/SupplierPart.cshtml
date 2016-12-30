@@ -1,0 +1,79 @@
+﻿@*
+@model NfcDemo.Models.Supplier
+
+<div class="row" ng-if="mc.showSuppForm">
+    <form class="form-horizontal" name="supplierForm" novalidate role="form">
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <h4>Поставщик</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Inn, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Inn, new { htmlAttributes = new { @class = "form-control", ng_model = "mc.supp.inn", id = "inn", name = "inn", ng_required = "true" } })
+             
+                    <span class="help-block"
+                          ng-if="supplierForm.Inn.$error.required">Введите номер ИНН</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.CompanyName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.CompanyName, new { htmlAttributes = new { @class = "form-control", ng_model = "mc.supp.companyName", id = "companyName", name = "companyName", ng_required = "true" } })
+               
+                    <span class="help-block"
+                          ng-if="supplierForm.CompanyName.$error.required">Введите имя компании</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="button" value="Create" class="btn btn-default" ng-click="mc.saveSupp(mc.supp)">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+*@
+
+
+<script type="text/ng-template" id="addNewSupplier.html">
+    <form class="form-horizontal" name="saveUpdateForm" novalidate role="form">
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$instc.cancel()">&times;</button>
+            <h3 class="text-info">{{$instc.title}}</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="form-group" ng-class="{'has-error':saveUpdateForm.itin.$invalid && saveUpdateForm.itin.$touched ||saveUpdateForm.itin.$error.pattern }" show-errors>
+                <label for="itin" class="text-info">ITIN</label>
+                <input class="form-control" ng-pattern="$instc.itinField.pattern" ng-minlength="9" id="itin" name="itin" ng-model="$instc.editableSupplier.itin" type="text" placeholder="Your ITIN here" ng-required="true" />
+                <span class="help-block"
+                      ng-if="saveUpdateForm.itin.$error.required && saveUpdateForm.itin.$touched">Please enter your ITIN</span>
+                <span class="help-block"
+                      ng-if="saveUpdateForm.itin.$error.minlength && saveUpdateForm.itin.$touched">ITIN must contain 9 digits</span>
+                <span class="help-block"
+                      ng-if="saveUpdateForm.itin.$error.pattern && saveUpdateForm.itin.$touched">Not a valid ITIN. The valid range is 900-70-0000 through 999-88-9999</span>
+            </div>
+            <div class="form-group" ng-class="{'has-error':saveUpdateForm.cn.$invalid && saveUpdateForm.cn.$touched}">
+                <label for="cn" class="text-info">Company Name</label>
+                <input class="form-control" ng-minlength="3" id="cn" name="cn" ng-model="$instc.editableSupplier.companyName" type="text" placeholder="Your company name here" ng-required="true" />
+                <span class="help-block"
+                      ng-if="saveUpdateForm.cn.$error.required && saveUpdateForm.cn.$touched">Please enter your company name</span>
+                <span class="help-block"
+                      ng-if="saveUpdateForm.cn.$error.minlength && saveUpdateForm.cn.$touched">Company name minimun 3 letters</span>
+            </div>
+        </div>
+@*        <p>{{saveUpdateForm.itin}}</p>
+        <p>{{saveUpdateForm.cn}}</p>*@
+        <div class="modal-footer">
+            <input type="submit" class="btn btn-primary" value="submit" ng-disabled="!saveUpdateForm.$valid" ng-click="$instc.submitForm()" />
+            <button type="button" class="btn btn-default" ng-click="$instc.cancel()">Close</button>
+        </div>
+    </form>
+</script>

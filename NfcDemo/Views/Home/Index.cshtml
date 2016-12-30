@@ -1,0 +1,128 @@
+﻿@model NfcDemo.Models.DeliveryVm
+@{
+    ViewBag.Title = "NFCDemo";
+}
+
+<div class="page-header">
+    <h1>Factoring Finance</h1>
+</div>
+
+<div ng-controller="mainCtrl as mc">
+
+    @*enter search*@
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button class="btn btn-secondary" type="button">Go!</button>
+                </span>
+                <input ng-model="searchQuery" class="form-control" placeholder="Enter your ITIN" type="text">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="alert alert-danger" ng-show="mc.data.error">
+                Error ({{mc.data.error.status}}). Error in loading supplier data.
+                <a href="/app.html" class="alert-link">Click here to try again.</a>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Suppliers found</h2>
+                </div>
+                <div class="panel-body">
+                    <table class="table small table-striped  table-responsive" ng-show="mc.isShown">
+                        <thead>
+                        <tr>
+                            <th>ITIN</th>
+                            <th>Supplier</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="supp in mc.data.suppliers | filter:searchQuery">
+                            <td>{{supp.itin}}</td>
+                            <td>{{supp.companyName}}</td>
+                            <td>
+                                <small>
+                                    <a href="#" class="btn btn-xs btn-info"
+                                       ng-click="mc.getSupplierDetails(supp.id)">
+                                        Details
+                                    </a>
+                                </small>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-6" ng-show="mc.details.isShown">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Result</h2>
+                </div>
+                <div class="panel-body">
+                    <table class="table small table-responsive">
+                        <thead>
+                        <tr>
+                            <th>ITIN:</th>
+                            <th>Supply amount:</th>
+                            <th>Supply total:</th>
+                            <th>Currency:</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>{{mc.details.supplierItin}}</td>
+                            <td>{{mc.details.totalDeliveryCount}}</td>
+                            <td>{{mc.details.totalDeliverySum|currency:'$'}}</td>
+                            <!-- <td>{{mc.details.deliveryCurrency}}</td>-->
+                            <td>
+                                <span ng-repeat="cur in mc.details.deliveryCurrency">{{cur}}{{$last ? '' : ', '}}</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2" ng-show="mc.showSupplierDetails">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Add new</h2>
+                </div>
+                <div class="panel-body">
+
+                    <table class="table small table-responsive">
+                        <tr>
+                            <div class="btn-group-vertical">
+                                <button type="button" class="btn  btn-warning btn-xs " ng-click="mc.addNewDelivery()">+ Delivery</button>
+                                <button type="button" class="btn btn-warning btn-xs" ng-click="mc.addNewSupplier()">+ Supplier</button>
+                                @*                            <button type="button" class="btn btn-warning btn-xs" ng-click="mc.toggleSuppForm()">+ Поставщик</button>*@
+
+                            </div>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--New Supplier Modal -->
+    <div class="panel-body">
+        @{ Html.RenderPartial("~/Views/Partials/DeliveryPart.cshtml"); }
+
+        @{ Html.RenderPartial("~/Views/Partials/SupplierPart.cshtml"); }
+
+    </div>
+    @section Scripts {
+
+    }
+</div>
